@@ -1,4 +1,19 @@
+# 在VINS-Mono的基础上
+
+适配kitti数据集， 主要参考邱博的知乎 + 评论区大佬。
+
+改动之处：
+
+1.时间的逆序和断续： 只能处理逆序
+
+2.kitti2bag生成bag包： 对python代码的简单修改
+
+
+
+
+
 # VINS-Mono
+
 ## A Robust and Versatile Monocular Visual-Inertial State Estimator
 
 **11 Jan 2019**: An extension of **VINS**, which supports stereo cameras / stereo cameras + IMU / mono camera + IMU, is published at [VINS-Fusion](https://github.com/HKUST-Aerial-Robotics/VINS-Fusion)
@@ -82,7 +97,7 @@ Download [EuRoC MAV Dataset](http://projects.asl.ethz.ch/datasets/doku.php?id=km
     roslaunch benchmark_publisher publish.launch  sequence_name:=MH_05_difficult
 ```
  (Green line is VINS result, red line is ground truth). 
- 
+
 3.1.3 (Optional) You can even run EuRoC **without extrinsic parameters** between camera and IMU. We will calibrate them online. Replace the first command with:
 ```
     roslaunch vins_estimator euroc_no_extrinsic_param.launch

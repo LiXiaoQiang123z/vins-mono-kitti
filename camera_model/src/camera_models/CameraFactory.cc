@@ -120,7 +120,7 @@ CameraFactory::generateCameraFromYamlFile(const std::string& filename)
         }
         else
         {
-            std::cerr << "# ERROR: Unknown camera model: " << sModelType << std::endl;
+            std::cerr << "# ERROR: Unknown camera model: " << sModelType <<" is equal: "<<(boost::iequals(sModelType, "pinhole")) << std::endl;
             return CameraPtr();
         }
     }

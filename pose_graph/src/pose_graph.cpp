@@ -39,6 +39,8 @@ void PoseGraph::loadVocabulary(std::string voc_path)
     db.setVocabulary(*voc, false, 0);
 }
 
+bool flag_first = false;
+double time_firsttime = 0;
 void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
 {
     //shift to base frame
@@ -150,19 +152,37 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
 
     if (SAVE_LOOP_PATH)
     {
+        // ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
+        // loop_path_file.setf(ios::fixed, ios::floatfield);
+        // loop_path_file.precision(0);
+        // loop_path_file << cur_kf->time_stamp * 1e9 << ",";
+        // loop_path_file.precision(5);
+        // loop_path_file  << P.x() << ","
+        //       << P.y() << ","
+        //       << P.z() << ","
+        //       << Q.w() << ","
+        //       << Q.x() << ","
+        //       << Q.y() << ","
+        //       << Q.z() << ","
+        //       << endl;
+        // loop_path_file.close();
+        if(!flag_first){
+            flag_first = true;
+            time_firsttime = cur_kf->time_stamp;
+        }
+
         ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
         loop_path_file.setf(ios::fixed, ios::floatfield);
-        loop_path_file.precision(0);
-        loop_path_file << cur_kf->time_stamp * 1e9 << ",";
+        loop_path_file.precision(9);
+        loop_path_file << (cur_kf->time_stamp - time_firsttime) << " ";
         loop_path_file.precision(5);
-        loop_path_file  << P.x() << ","
-              << P.y() << ","
-              << P.z() << ","
-              << Q.w() << ","
-              << Q.x() << ","
-              << Q.y() << ","
-              << Q.z() << ","
-              << endl;
+        loop_path_file << P.x() << " "
+                       << P.y() << " "
+                       << P.z() << " "
+                       << Q.x() << " "
+                       << Q.y() << " "
+                       << Q.z() << " "
+                       << Q.w() << endl;
         loop_path_file.close();
     }
     //draw local connection
@@ -578,6 +598,8 @@ void PoseGraph::optimize4DoF()
     }
 }
 
+bool flag_first2 = false;
+double time_firsttime2 = 0;
 void PoseGraph::updatePath()
 {
     m_keyframelist.lock();
@@ -627,19 +649,37 @@ void PoseGraph::updatePath()
 
         if (SAVE_LOOP_PATH)
         {
+            // ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
+            // loop_path_file.setf(ios::fixed, ios::floatfield);
+            // loop_path_file.precision(0);
+            // loop_path_file << (*it)->time_stamp * 1e9 << ",";
+            // loop_path_file.precision(5);
+            // loop_path_file  << P.x() << ","
+            //       << P.y() << ","
+            //       << P.z() << ","
+            //       << Q.w() << ","
+            //       << Q.x() << ","
+            //       << Q.y() << ","
+            //       << Q.z() << ","
+            //       << endl;
+            // loop_path_file.close();
+
+            if (!flag_first2){
+                flag_first2 = true;
+                time_firsttime2 = (*it)->time_stamp; // header.stamp.toSec();
+            }
             ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
             loop_path_file.setf(ios::fixed, ios::floatfield);
-            loop_path_file.precision(0);
-            loop_path_file << (*it)->time_stamp * 1e9 << ",";
+            loop_path_file.precision(9);
+            loop_path_file << ( (*it)->time_stamp - time_firsttime2) << " ";
             loop_path_file.precision(5);
-            loop_path_file  << P.x() << ","
-                  << P.y() << ","
-                  << P.z() << ","
-                  << Q.w() << ","
-                  << Q.x() << ","
-                  << Q.y() << ","
-                  << Q.z() << ","
-                  << endl;
+            loop_path_file  << P.x() << " "
+                  << P.y() << " "
+                  << P.z() << " "
+                  << Q.x() << " "
+                  << Q.y() << " "
+                  << Q.z() << " "
+                  << Q.w() << endl;
             loop_path_file.close();
         }
         //draw local connection

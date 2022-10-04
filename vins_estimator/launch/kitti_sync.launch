@@ -1,0 +1,34 @@
+<launch>
+    <!-- 设置局部变量：config_path，表示 euroc_config.yaml的地址 
+        同理，局部变量：vins_path， 在parameters.cpp中使用鱼眼相机mask中用到 -->
+    <arg name="config_path" default = "$(find feature_tracker)/../config/kitti/kitti_config_08sync.yaml" />
+	  <arg name="vins_path" default = "$(find feature_tracker)/../config/../" />
+    
+    <!-- 启动节点：feature_tracker， 该节点，需要读取参数文件-config_file -->
+    <node name="feature_tracker" pkg="feature_tracker" type="feature_tracker" output="log">
+        <param name="config_file" type="string" value="$(arg config_path)" />
+        <param name="vins_folder" type="string" value="$(arg vins_path)" />
+    </node>
+
+    <!-- 启动节点：vins_estimator 同样，是读取参数文件 -->
+    <node name="vins_estimator" pkg="vins_estimator" type="vins_estimator" output="screen">
+       <param name="config_file" type="string" value="$(arg config_path)" />
+       <param name="vins_folder" type="string" value="$(arg vins_path)" />
+    </node>
+
+    <!-- 启动节点：pose_graph 读取配置文件，同时设置了四个参数-->
+    <node name="pose_graph" pkg="pose_graph" type="pose_graph" output="screen">
+        <param name="config_file" type="string" value="$(arg config_path)" />
+        <param name="visualization_shift_x" type="int" value="0" />
+        <param name="visualization_shift_y" type="int" value="0" />
+        <param name="skip_cnt" type="int" value="0" />
+        <param name="skip_dis" type="double" value="0" />
+    </node>
+    <!-- visualization_shift_x和visualization_shift_y表示在进行位姿图优化后，
+        对得到的位姿在x坐标和y坐标的偏移量（一般都设为0）； 
+        
+        skip_cnt在pose_graph_node的process()中，表示每隔skip_cnt个图像帧才进行一次处理；
+        skip_dis也在pose_graph_node的process()中，目的是将距上一帧的时间间隔超过SKIP_DIS的
+        图像创建为位姿图中的关键帧。-->
+
+</launch>

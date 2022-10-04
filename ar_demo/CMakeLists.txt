@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   camera_model
 )
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3.4.5 REQUIRED)
 
 catkin_package(
 
